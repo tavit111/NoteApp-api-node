@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const _ = require('lodash');
 const Joi = require('joi');
 const bcrypt = require('bcrypt');
+const _ = require('lodash');
 const {User} = require("../models/user");
 
 // add: hashing passwords and config
@@ -16,8 +16,9 @@ router.post('/', async (req, res)=>{
     const compare = await bcrypt.compare(req.body.password, user.password);
     if(!compare) return res.status(400).send("wrong email or password");
     
-    const responce = await user.genereateJwt();
-    res.send(responce);
+    const token = await user.genereateJwt();
+    const userProperties = _.pick(user, ['_id', 'email', 'name']);
+    res.header('x-auth-token', token).send(userProperties);
 });
 
 function validateAuth(login){

@@ -21,9 +21,10 @@ router.post('/', async (req, res)=>{
     });
     
     await user.save();
-    const response = _.pick(user, ['_id', 'name', 'email']);
-
-    res.send(response);
+    
+    const token = await user.genereateJwt();
+    const userProperties = _.pick(user, ['_id', 'name', 'email']);
+    res.header('x-auth-token', token).send(userProperties);
 });
 
 
