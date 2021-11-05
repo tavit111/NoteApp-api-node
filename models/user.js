@@ -21,7 +21,13 @@ const userSchema = new mongoose.Schema({
     }
 });
 userSchema.methods.genereateJwt = function(){
-    return jwt.sign({_id: this._id}, "secretpassword");
+    return jwt.sign(
+        {
+            _id: this._id,
+            name: this.name,
+            email: this.email,
+        },
+        "secretpassword");
 }
 
 const User = mongoose.model("User", userSchema);
