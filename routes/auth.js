@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 const _ = require('lodash');
 const {User} = require("../models/user");
 
-// add: hashing passwords and config
+// add: config
 router.post('/', async (req, res)=>{
     const {error} = validateAuth(req.body);
     if(error) return res.status(400).send(error.details[0].message);
@@ -17,8 +17,7 @@ router.post('/', async (req, res)=>{
     if(!compare) return res.status(400).send("wrong email or password");
     
     const token = await user.genereateJwt();
-    const userProperties = _.pick(user, ['_id', 'email', 'name']);
-    res.header('x-auth-token', token).send(userProperties);
+    res.send(token);
 });
 
 function validateAuth(login){
