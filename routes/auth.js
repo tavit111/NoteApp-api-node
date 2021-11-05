@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 const _ = require('lodash');
 const {User} = require("../models/user");
 
-// add: config
+
 router.post('/', async (req, res)=>{
     const {error} = validateAuth(req.body);
     if(error) return res.status(400).send(error.details[0].message);

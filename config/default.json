@@ -1,3 +1,5 @@
 {
-    "jwtPrivateKey": ""
+    "jwtPrivateKey": "myPrivatePasswordIs12345",
+    "port": 3001,
+    "db": "mongodb://localhost:27017/notes"
 }
