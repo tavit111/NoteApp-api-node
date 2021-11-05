@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const {Notes, validateNotes} = require("../models/notes");
+const auth = require('../middleware/auth');
 
 
-router.get('/', async (req, res)=>{
-    const notes = await Notes.find().sort("_id");
+router.get('/', auth, async (req, res)=>{
+    const notes = await Notes.find({userId: req.user._id});
 
     res.send(notes);
 })
