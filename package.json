@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --watchAll --maxWorkers=1"
+    "test": "jest --watchAll --verbose --maxWorkers=1"
   },
   "keywords": [],
   "author": "",
@@ -20,6 +20,7 @@
     "mongoose": "^6.0.12"
   },
   "devDependencies": {
-    "jest": "^27.3.1"
+    "jest": "^27.2.1",
+    "supertest": "^6.1.6"
   }
 }
