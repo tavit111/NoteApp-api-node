@@ -26,7 +26,6 @@ const validateNotes = (note) => {
   const schema = Joi.object({
     title: Joi.string().min(1).max(100).required(),
     body: Joi.string().max(999),
-    userId: Joi.objectId().required(),
   });
   return schema.validate(note);
 };

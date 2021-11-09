@@ -27,7 +27,7 @@ describe("/api/auth", () => {
     };
 
     beforeEach(async () => {
-      email = "12345@email.com";
+      email = "a@a.com";
       password = "12345";
       name = "123";
       const user = new User({
@@ -58,6 +58,12 @@ describe("/api/auth", () => {
       expect(res.status).toBe(400);
     });
 
+    it("should return status 400 if email is not valid", async () => {
+      email = "a";
+      const res = await exec();
+      expect(res.status).toBe(400);
+    });
+
     it("should return status 400 if password is not given", async () => {
       password = "";
       const res = await exec();
@@ -65,13 +71,13 @@ describe("/api/auth", () => {
     });
 
     it("should return status 400 if email donse not match", async () => {
-      email = "9999@email.com";
+      email = "b@a.com";
       const res = await exec();
       expect(res.status).toBe(400);
     });
 
     it("should return status 400 if password donse not match", async () => {
-      password = "99999";
+      password = "123456";
       const res = await exec();
       expect(res.status).toBe(400);
     });

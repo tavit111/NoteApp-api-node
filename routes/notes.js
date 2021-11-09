@@ -9,14 +9,14 @@ router.get("/", auth, async (req, res) => {
   res.send(notes);
 });
 
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
   const { error } = validateNotes(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
   const notes = new Notes({
     title: req.body.title,
     body: req.body.body,
-    userId: req.body.userId,
+    userId: req.user._id,
   });
   await notes.save();
 

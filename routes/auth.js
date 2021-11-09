@@ -15,13 +15,13 @@ router.post("/", async (req, res) => {
   const compare = await bcrypt.compare(req.body.password, user.password);
   if (!compare) return res.status(400).send("wrong email or password");
 
-  const token = await user.genereateJwt();
+  const token = user.genereateJwt();
   res.send(token);
 });
 
 function validateAuth(login) {
   const schema = Joi.object({
-    email: Joi.string().required(),
+    email: Joi.string().email().required(),
     password: Joi.string().min(5).required(),
   });
   return schema.validate(login);
