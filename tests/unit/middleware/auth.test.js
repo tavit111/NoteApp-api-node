@@ -1,5 +1,3 @@
-// const config = requier("config");
-// const jwt = require("jsonwebtoken");
 const auth = require("../../../middleware/auth");
 const mongoose = require("mongoose");
 const { User } = require("../../../models/user");
