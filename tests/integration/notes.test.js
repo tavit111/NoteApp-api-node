@@ -262,4 +262,73 @@ describe("/api/notes", () => {
       expect(res.status).toBe(400);
     });
   });
+
+  describe("DELETE /:id", () => {
+    let note;
+    let id;
+
+    beforeEach(async () => {
+      note = new Notes({
+        title,
+        body,
+        userId: user._id,
+      });
+      await note.save();
+
+      id = note._id;
+    });
+
+    const exec = () => {
+      return request(server)
+        .delete(`/api/notes/${id}`)
+        .set("x-auth-token", token);
+    };
+
+    it("should retunr staus 200 if the id is in server", async () => {
+      const res = await exec();
+
+      expect(res.status).toBe(200);
+    });
+
+    it("should retunr note with valid _id", async () => {
+      const res = await exec();
+
+      expect(res.body).toHaveProperty("_id", note._id.toString());
+    });
+
+    it("should delete note with given note id", async () => {
+      await exec();
+      const res = await Notes.findById(id);
+
+      expect(res).toBeNull();
+    });
+
+    it("should retunr status 401 if no token is povided ", async () => {
+      token = "";
+      const res = await exec();
+
+      expect(res.status).toBe(401);
+    });
+
+    it("should retunr status 400 if ivalid token is povided ", async () => {
+      token = "a";
+      const res = await exec();
+
+      expect(res.status).toBe(400);
+    });
+
+    it("should retunr status 404 if note id is not valid id ", async () => {
+      id = "a";
+      const res = await exec();
+
+      expect(res.status).toBe(404);
+    });
+
+    it("should retunr status 404 if note id is not in database ", async () => {
+      id = mongoose.Types.ObjectId().toString();
+      const res = await exec();
+
+      expect(res.status).toBe(404);
+    });
+  });
 });

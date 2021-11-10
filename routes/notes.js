@@ -46,4 +46,11 @@ router.put("/:id", [validateId, auth], async (req, res) => {
   res.send(note);
 });
 
+router.delete("/:id", [validateId, auth], async (req, res) => {
+  const note = await Notes.findByIdAndRemove(req.params.id);
+  if (!note) return res.status(404).send("no note id in the database");
+
+  res.send(note);
+});
+
 module.exports = router;
