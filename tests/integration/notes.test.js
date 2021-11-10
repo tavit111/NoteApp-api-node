@@ -15,7 +15,7 @@ describe("/api/notes", () => {
     user = new User();
     token = user.genereateJwt();
     title = "a";
-    body = "a";
+    body = "b";
   });
   afterEach(async () => {
     await server.close();
@@ -69,6 +69,7 @@ describe("/api/notes", () => {
 
   describe("GET /:id", () => {
     let note;
+    let id;
 
     beforeEach(async () => {
       note = new Notes({
@@ -77,48 +78,50 @@ describe("/api/notes", () => {
         userId: user._id,
       });
       await note.save();
+
+      id = note._id;
     });
 
+    const exec = () => {
+      return request(server).get(`/api/notes/${id}`).set("x-auth-token", token);
+    };
+
     it("should retunr staus 200 if the id is in server", async () => {
-      const res = await request(server)
-        .get(`/api/notes/${note._id}`)
-        .set("x-auth-token", token);
+      const res = await exec();
 
       expect(res.status).toBe(200);
     });
 
     it("should retunr note with valid _id", async () => {
-      const res = await request(server)
-        .get(`/api/notes/${note._id}`)
-        .set("x-auth-token", token);
+      const res = await exec();
 
       expect(res.body).toHaveProperty("_id", note._id.toString());
     });
 
     it("should retunr status 401 if no token is povided ", async () => {
       token = "";
-      const res = await request(server)
-        .get(`/api/notes/${note._id}`)
-        .set("x-auth-token", token);
+      const res = await exec();
 
       expect(res.status).toBe(401);
     });
 
     it("should retunr status 400 if ivalid token is povided ", async () => {
       token = "a";
-      const res = await request(server)
-        .get(`/api/notes/${note._id}`)
-        .set("x-auth-token", token);
+      const res = await exec();
 
       expect(res.status).toBe(400);
     });
 
-    it("should retunr status 404 if note id is not in database ", async () => {
-      const id = mongoose.Types.ObjectId().toString();
+    it("should retunr status 404 if note id is not valid id ", async () => {
+      id = "a";
+      const res = await exec();
 
-      const res = await request(server)
-        .get(`/api/notes/${id}`)
-        .set("x-auth-token", token);
+      expect(res.status).toBe(404);
+    });
+
+    it("should retunr status 404 if note id is not in database ", async () => {
+      id = mongoose.Types.ObjectId().toString();
+      const res = await exec();
 
       expect(res.status).toBe(404);
     });
@@ -170,6 +173,62 @@ describe("/api/notes", () => {
       const res = await exec();
 
       expect(res.status).toBe(400);
+    });
+  });
+
+  describe("PUT", () => {
+    let note;
+    let newTitle;
+    let newBody;
+    let id;
+
+    beforeEach(async () => {
+      newTitle = "aa";
+      newBody = "bb";
+
+      note = new Notes({
+        title,
+        body,
+        userId: user._id,
+      });
+      await note.save();
+
+      id = note._id.toString();
+    });
+
+    const exec = () => {
+      return request(server)
+        .put(`/api/notes/${id}`)
+        .set("x-auth-token", token)
+        .send({ title: newTitle, body: newBody });
+    };
+
+    it("should retunr status 200 if the input and note id is valid", async () => {
+      const res = await exec();
+
+      expect(res.status).toBe(200);
+    });
+
+    it("should retunr new note if the input and id is valid", async () => {
+      const res = await exec();
+
+      expect(res.body).toHaveProperty("_id", id.toString());
+      expect(res.body).toHaveProperty("title", newTitle);
+      expect(res.body).toHaveProperty("body", newBody);
+    });
+
+    it("should retunr status 404 if the note id is not valid id", async () => {
+      id = "a";
+      const res = await exec();
+
+      expect(res.status).toBe(404);
+    });
+
+    it("should retunr status 404 if the note id is not in databse", async () => {
+      id = mongoose.Types.ObjectId().toString();
+      const res = await exec();
+
+      expect(res.status).toBe(404);
     });
   });
 });
