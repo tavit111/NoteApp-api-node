@@ -13,7 +13,7 @@ router.get("/", auth, async (req, res) => {
 
 router.get("/:id", [validateId, auth], async (req, res) => {
   const note = await Notes.findById(req.params.id);
-  if (!note) return res.status(404).send("no user id in the database");
+  if (!note) return res.status(404).send("no note id in the database");
 
   res.send(note);
 });
@@ -34,7 +34,7 @@ router.post("/", auth, async (req, res) => {
 
 router.put("/:id", [validateId, auth], async (req, res) => {
   const note = await Notes.findById(req.params.id);
-  if (!note) return res.status(404).send("no user id in the database");
+  if (!note) return res.status(404).send("no noet id in the database");
 
   const { error } = validateNotes(req.body);
   if (error) return res.status(400).send(error.details[0].message);

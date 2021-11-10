@@ -157,7 +157,7 @@ describe("/api/notes", () => {
       expect(res.status).toBe(400);
     });
     it("should return status 400 if body is more then 999 characters", async () => {
-      title = Array(1001).join("a");
+      body = Array(1001).join("a");
       const res = await exec();
 
       expect(res.status).toBe(400);
@@ -229,6 +229,37 @@ describe("/api/notes", () => {
       const res = await exec();
 
       expect(res.status).toBe(404);
+    });
+
+    it("should return status 400 if title is not provide", async () => {
+      newTitle = "";
+      const res = await exec();
+
+      expect(res.status).toBe(400);
+    });
+    it("should return status 400 if title is more then 100 characters", async () => {
+      newTitle = Array(102).join("a");
+      const res = await exec();
+
+      expect(res.status).toBe(400);
+    });
+    it("should return status 400 if body is more then 999 characters", async () => {
+      newBody = Array(1001).join("a");
+      const res = await exec();
+
+      expect(res.status).toBe(400);
+    });
+    it("should return status 401 if token is not provided", async () => {
+      token = "";
+      const res = await exec();
+
+      expect(res.status).toBe(401);
+    });
+    it("should return status 400 if token is not valid", async () => {
+      token = "a";
+      const res = await exec();
+
+      expect(res.status).toBe(400);
     });
   });
 });
