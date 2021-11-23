@@ -6,7 +6,7 @@ const validateId = require("../middleware/validateId");
 const mongoose = require("mongoose");
 
 router.get("/", auth, async (req, res) => {
-  const notes = await Notes.find({ userId: req.user._id });
+  const notes = await Notes.find({ userId: req.user._id }).sort("-date");
 
   const payload = notes.map((note) => ({
     _id: note._id,
