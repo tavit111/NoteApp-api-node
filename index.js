@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const config = require("config");
+const cors = require("cors");
 const express = require("express");
 const app = express();
 const notes = require("./routes/notes");
@@ -8,6 +9,7 @@ const auth = require("./routes/auth");
 
 //middleware
 app.use(express.json());
+app.use(cors());
 
 //endpoints
 app.use("/api/notes", notes);
@@ -26,10 +28,3 @@ const port = config.get("port");
 const server = app.listen(port, () => console.log(`listen on port ${port}...`));
 
 module.exports = server;
-
-/// TODO:
-//  add all integration testing
-//  add unit testing
-//  /api/notes add: get:id, delete, put
-//  /api/user add: delete with admin privaleges
-//  middleware: create admin privlages

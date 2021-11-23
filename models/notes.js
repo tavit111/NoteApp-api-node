@@ -19,6 +19,10 @@ const Notes = mongoose.model(
       type: mongoose.Types.ObjectId,
       require: true,
     },
+    date: {
+      type: Date,
+      default: Date.now,
+    },
   })
 );
 

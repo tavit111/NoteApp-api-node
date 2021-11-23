@@ -8,14 +8,27 @@ const mongoose = require("mongoose");
 router.get("/", auth, async (req, res) => {
   const notes = await Notes.find({ userId: req.user._id });
 
-  res.send(notes);
+  const payload = notes.map((note) => ({
+    _id: note._id,
+    title: note.title,
+    body: note.body,
+    date: note.date,
+  }));
+
+  res.send(payload);
 });
 
 router.get("/:id", [validateId, auth], async (req, res) => {
   const note = await Notes.findById(req.params.id);
   if (!note) return res.status(404).send("no note id in the database");
 
-  res.send(note);
+  const payload = {
+    _id: note._id,
+    title: note.title,
+    body: note.body,
+  };
+
+  res.send(payload);
 });
 
 router.post("/", auth, async (req, res) => {
@@ -41,6 +54,7 @@ router.put("/:id", [validateId, auth], async (req, res) => {
 
   note.title = req.body.title;
   note.body = req.body.body;
+  note.date = Date.now();
   await note.save();
 
   res.send(note);
