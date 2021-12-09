@@ -6,6 +6,7 @@ const app = express();
 const notes = require("./routes/notes");
 const user = require("./routes/user");
 const auth = require("./routes/auth");
+const categories = require("./routes/categories");
 
 //middleware
 app.use(express.json());
@@ -15,6 +16,7 @@ app.use(cors());
 app.use("/api/notes", notes);
 app.use("/api/user", user);
 app.use("/api/auth", auth);
+app.use("/api/categories", categories);
 
 //connect to db
 const dbUrl = config.get("db");
@@ -28,3 +30,7 @@ const port = config.get("port");
 const server = app.listen(port, () => console.log(`listen on port ${port}...`));
 
 module.exports = server;
+
+// todo:
+// - think of encapsulating the logic of incrementing and decrementing
+// - think of other solution to do the same think

@@ -17,11 +17,17 @@ const Notes = mongoose.model(
     },
     userId: {
       type: mongoose.Types.ObjectId,
+      ref: "User",
       require: true,
     },
     date: {
       type: Date,
       default: Date.now,
+    },
+    category: {
+      type: mongoose.Types.ObjectId,
+      ref: "Categories",
+      default: null,
     },
   })
 );
@@ -30,6 +36,7 @@ const validateNotes = (note) => {
   const schema = Joi.object({
     title: Joi.string().min(1).max(100).required(),
     body: Joi.string().max(999),
+    category: Joi.objectId,
   });
   return schema.validate(note);
 };
