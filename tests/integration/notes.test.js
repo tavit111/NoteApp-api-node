@@ -1,6 +1,7 @@
 const request = require("supertest");
 const { User } = require("../../models/user");
 const { Notes } = require("../../models/notes");
+const { Categories } = require("../../models/categories");
 const mongoose = require("mongoose");
 
 let server;
@@ -8,11 +9,14 @@ let user;
 let token;
 let title;
 let body;
+let category;
 
 describe("/api/notes", () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     server = require("../../index");
     user = new User();
+    category = new Categories({ name: "A", count: 1 });
+    await category.save();
     token = user.genereateJwt();
     title = "a";
     body = "b";
@@ -20,6 +24,7 @@ describe("/api/notes", () => {
   afterEach(async () => {
     await server.close();
     await Notes.remove({});
+    await Categories.remove({});
   });
 
   describe("GET", () => {
@@ -32,6 +37,7 @@ describe("/api/notes", () => {
         title,
         body,
         userId: user._id,
+        category: category._id,
       });
       await note.save();
     });
@@ -46,6 +52,10 @@ describe("/api/notes", () => {
       expect(res.body[0]).toHaveProperty("_id");
       expect(res.body[0]).toHaveProperty("title", title);
       expect(res.body[0]).toHaveProperty("body", body);
+      expect(res.body[0].category).toMatchObject({
+        _id: category._id,
+        name: category.name,
+      });
     });
 
     it("should return status 401 if token is not provided", async () => {
@@ -76,6 +86,7 @@ describe("/api/notes", () => {
         title,
         body,
         userId: user._id,
+        category: category._id,
       });
       await note.save();
 
@@ -132,7 +143,7 @@ describe("/api/notes", () => {
       return request(server)
         .post("/api/notes")
         .set("x-auth-token", token)
-        .send({ title, body });
+        .send({ title, body, category: category._id });
     };
 
     it("should return posted note if input is valid", async () => {
@@ -141,7 +152,14 @@ describe("/api/notes", () => {
       expect(res.body).toHaveProperty("_id");
       expect(res.body).toHaveProperty("title", title);
       expect(res.body).toHaveProperty("body", body);
-      expect(res.body).toHaveProperty("userId", user._id.toString());
+      expect(res.body).toHaveProperty("category", category._id.toString());
+    });
+
+    it("should increment category count if category id is provided", async () => {
+      await exec();
+      const res = await Categories.findById(category._id);
+
+      expect(res).toHaveProperty("count", 2);
     });
 
     it("should return status 400 if title is not provide", async () => {
@@ -180,16 +198,20 @@ describe("/api/notes", () => {
     let note;
     let newTitle;
     let newBody;
+    let newCategory;
     let id;
 
     beforeEach(async () => {
       newTitle = "aa";
       newBody = "bb";
+      newCategory = new Categories({ name: "B" });
+      await newCategory.save();
 
       note = new Notes({
         title,
         body,
         userId: user._id,
+        category: category._id,
       });
       await note.save();
 
@@ -200,7 +222,7 @@ describe("/api/notes", () => {
       return request(server)
         .put(`/api/notes/${id}`)
         .set("x-auth-token", token)
-        .send({ title: newTitle, body: newBody });
+        .send({ title: newTitle, body: newBody, category: newCategory._id });
     };
 
     it("should retunr status 200 if the input and note id is valid", async () => {
@@ -215,6 +237,16 @@ describe("/api/notes", () => {
       expect(res.body).toHaveProperty("_id", id.toString());
       expect(res.body).toHaveProperty("title", newTitle);
       expect(res.body).toHaveProperty("body", newBody);
+      expect(res.body).toHaveProperty("category", newCategory._id.toString());
+    });
+
+    it("should decrement old category and increment new category count if new category is provided", async () => {
+      await exec();
+      const oldCategoryResult = await Categories.findById(category._id);
+      const newCategoryResult = await Categories.findById(newCategory._id);
+
+      expect(oldCategoryResult).toHaveProperty("count", 0);
+      expect(newCategoryResult).toHaveProperty("count", 1);
     });
 
     it("should retunr status 404 if the note id is not valid id", async () => {
@@ -272,6 +304,7 @@ describe("/api/notes", () => {
         title,
         body,
         userId: user._id,
+        category: category._id,
       });
       await note.save();
 
@@ -288,6 +321,13 @@ describe("/api/notes", () => {
       const res = await exec();
 
       expect(res.status).toBe(200);
+    });
+
+    it("should set category count to 0 when deleted", async () => {
+      await exec();
+      catgoryResult = await Categories.findById(category._id);
+
+      expect(catgoryResult).toHaveProperty("count", 0);
     });
 
     it("should retunr note with valid _id", async () => {

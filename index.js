@@ -34,3 +34,4 @@ module.exports = server;
 // todo:
 // - think of encapsulating the logic of incrementing and decrementing
 // - think of other solution to do the same think
+// - write the tests for new changes
