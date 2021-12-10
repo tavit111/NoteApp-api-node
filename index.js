@@ -31,7 +31,5 @@ const server = app.listen(port, () => console.log(`listen on port ${port}...`));
 
 module.exports = server;
 
-// todo:
-// - think of encapsulating the logic of incrementing and decrementing
-// - think of other solution to do the same think
-// - write the tests for new changes
+//todo:
+// - make transaction for incrementing and decrementing with saving the notes

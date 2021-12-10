@@ -10,18 +10,22 @@ router.get("/", auth, async (req, res) => {
     "-_id"
   );
 
-  res.send(categories);
+  const payload = categories.map((category) =>
+    _.pick(category, ["_id", "name", "count"])
+  );
+
+  res.send(payload);
 });
 
 router.post("/", auth, async (req, res) => {
   const { error } = validateCategories(req.body);
   if (error) return res.status(401).send(error.details[0].message);
 
-  const duplicate = await Categories.findOne({
+  const isNameExists = await Categories.findOne({
     name: req.body.name,
     userId: req.user._id,
   });
-  if (duplicate) return res.status(400).send("name arleady exists");
+  if (isNameExists) return res.status(400).send("name arleady exists");
 
   const category = new Categories({
     name: req.body.name,

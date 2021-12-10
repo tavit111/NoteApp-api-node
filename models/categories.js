@@ -9,28 +9,42 @@ const mongoose = require("mongoose");
 const Joi = require("joi");
 Joi.objectId = require("joi-objectid")(Joi);
 
-const Categories = mongoose.model(
-  "Categories",
-  new mongoose.Schema({
-    name: {
-      type: String,
-      unique: true,
-      min: 1,
-      max: 16,
-      require: true,
-    },
-    userId: {
-      type: mongoose.Types.ObjectId,
-      ref: "User",
-      require: true,
-    },
-    count: {
-      type: Number,
-      min: 0,
-      default: 0,
-    },
-  })
-);
+const categoriesSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    unique: true,
+    min: 1,
+    max: 16,
+    require: true,
+  },
+  userId: {
+    type: mongoose.Types.ObjectId,
+    ref: "User",
+    require: true,
+  },
+  count: {
+    type: Number,
+    min: 0,
+    default: 0,
+  },
+});
+
+categoriesSchema.statics.incrementCount = function (id) {
+  if (id) {
+    return this.findByIdAndUpdate(id, {
+      $inc: { count: 1 },
+    });
+  }
+};
+categoriesSchema.statics.decrementCount = function (id) {
+  if (id) {
+    return this.findByIdAndUpdate(id, {
+      $inc: { count: -1 },
+    });
+  }
+};
+
+const Categories = mongoose.model("Categories", categoriesSchema);
 
 const validateCategories = (category) => {
   const schema = Joi.object({
