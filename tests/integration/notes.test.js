@@ -52,6 +52,7 @@ describe("/api/notes", () => {
       expect(res.body[0]).toHaveProperty("_id");
       expect(res.body[0]).toHaveProperty("title", title);
       expect(res.body[0]).toHaveProperty("body", body);
+      expect(res.body[0]).toHaveProperty("date");
       expect(res.body[0].category).toMatchObject({
         _id: category._id,
         name: category.name,

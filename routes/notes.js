@@ -13,7 +13,7 @@ router.get("/", auth, async (req, res) => {
     .sort("-date");
 
   const payload = notes.map((note) =>
-    _.pick(note, ["_id", "title", "body", "category"])
+    _.pick(note, ["_id", "title", "body", "date", "category"])
   );
 
   res.send(payload);
