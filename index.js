@@ -8,6 +8,23 @@ const user = require("./routes/user");
 const auth = require("./routes/auth");
 const categories = require("./routes/categories");
 
+// Load .env.* file if exist
+try {
+  const dotenvfile = `.env.${process.env.NODE_ENV || "development"}`;
+  require("dotenv").config({
+    path: dotenvfile,
+  });
+  console.log(`Loding env variables from ${dotenvfile}`);
+} catch (e) {
+  console.log("No .env file detected");
+}
+
+// check for JWT_PRIVATE_KEY in env varaibles
+if (!process.env.JWT_PRIVATE_KEY) {
+  console.error("FATAL ERROR: JWT_PRIVATE_KEY is not defined.");
+  process.exit(1);
+}
+
 //middleware
 app.use(express.json());
 app.use(cors());
@@ -19,14 +36,14 @@ app.use("/api/auth", auth);
 app.use("/api/categories", categories);
 
 //connect to db
-const dbUrl = config.get("db");
+const dbUrl = process.env.MONGODB_URI || config.get("db");
 mongoose
   .connect(dbUrl)
   .then(() => console.log(`connected to db ${dbUrl}`))
   .catch((er) => console.log(er));
 
 //server listener
-const port = config.get("port");
+const port = process.env.PORT || config.get("port");
 const server = app.listen(port, () => console.log(`listen on port ${port}...`));
 
 module.exports = server;

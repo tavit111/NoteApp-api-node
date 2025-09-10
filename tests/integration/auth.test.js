@@ -2,7 +2,6 @@ const request = require("supertest");
 const { User } = require("../../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const config = require("config");
 let server;
 
 describe("/api/auth", () => {
@@ -45,7 +44,7 @@ describe("/api/auth", () => {
 
     it("should return valid jwt token", async () => {
       const res = await exec();
-      const decoded = await jwt.verify(res.text, config.get("jwtPrivateKey"));
+      const decoded = await jwt.verify(res.text, process.env.JWT_PRIVATE_KEY);
       expect(decoded).toHaveProperty("_id");
       expect(decoded).toHaveProperty("email", email);
       expect(decoded).toHaveProperty("name", name);

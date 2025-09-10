@@ -1,7 +1,6 @@
 const request = require("supertest");
 const { User } = require("../../models/user");
 const jwt = require("jsonwebtoken");
-const config = require("config");
 const bcrypt = require("bcrypt");
 
 describe("/api/user", () => {
@@ -42,7 +41,7 @@ describe("/api/user", () => {
       const res = await exec();
 
       const token = res.get("x-auth-token");
-      const userObject = await jwt.verify(token, config.get("jwtPrivateKey"));
+      const userObject = await jwt.verify(token, process.env.JWT_PRIVATE_KEY);
       expect(userObject).toHaveProperty("_id", res.body._id);
     });
     it("should create encripted password", async () => {

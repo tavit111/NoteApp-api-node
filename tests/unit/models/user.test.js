@@ -1,6 +1,5 @@
 const { User } = require("../../../models/user");
 const jwt = require("jsonwebtoken");
-const config = require("config");
 const mongoose = require("mongoose");
 
 describe("user.genereateJwt", () => {
@@ -9,7 +8,7 @@ describe("user.genereateJwt", () => {
     const user = new User(payload);
     const token = user.genereateJwt();
 
-    const decoded = await jwt.verify(token, config.get("jwtPrivateKey"));
+    const decoded = await jwt.verify(token, process.env.JWT_PRIVATE_KEY);
 
     expect(decoded).toMatchObject(payload);
   });
