@@ -26,8 +26,14 @@ if (!process.env.JWT_PRIVATE_KEY) {
 }
 
 //middleware
+const corsOptions = {
+  origin: process.env.ALLOWED_ORIGIN,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "x-auth-token"],
+  credentials: true,
+};
+app.use(cors(corsOptions));
 app.use(express.json());
-app.use(cors());
 
 //endpoints
 app.use("/api/notes", notes);
