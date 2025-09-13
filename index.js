@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const config = require("config");
 const cors = require("cors");
 const express = require("express");
 const app = express();
@@ -42,14 +41,14 @@ app.use("/api/auth", auth);
 app.use("/api/categories", categories);
 
 //connect to db
-const dbUrl = process.env.MONGODB_URI || config.get("db");
+const dbUrl = process.env.MONGO_URL;
 mongoose
   .connect(dbUrl)
   .then(() => console.log(`connected to db ${dbUrl}`))
   .catch((er) => console.log(er));
 
 //server listener
-const port = process.env.PORT || config.get("port");
+const port = process.env.PORT;
 const server = app.listen(port, () => console.log(`listen on port ${port}...`));
 
 module.exports = server;
