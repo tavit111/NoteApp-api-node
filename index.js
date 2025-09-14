@@ -8,14 +8,16 @@ const auth = require("./routes/auth");
 const categories = require("./routes/categories");
 
 // Load .env.* file if exist
-try {
-  const dotenvfile = `.env.${process.env.NODE_ENV || "development"}`;
-  require("dotenv").config({
-    path: dotenvfile,
-  });
-  console.log(`Loding env variables from ${dotenvfile}`);
-} catch (e) {
-  console.log("No .env file detected");
+if (process.env.NODE_ENV !== "production") {
+  try {
+    const dotenvfile = `.env.${process.env.NODE_ENV || "development"}`;
+    require("dotenv").config({
+      path: dotenvfile,
+    });
+    console.log(`Loding env variables from ${dotenvfile}`);
+  } catch (e) {
+    console.log("No .env file detected");
+  }
 }
 
 // check for JWT_PRIVATE_KEY in env varaibles
