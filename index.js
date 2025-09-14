@@ -39,12 +39,7 @@ app.get("/health", (req, res) => {
 const corsOptions = {
   origin: process.env.ALLOWED_ORIGIN,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: [
-    "Content-Type",
-    "Authorization",
-    "x-auth-token",
-    "X-Auth-Token",
-  ],
+  allowedHeaders: ["Content-Type", "Authorization", "x-auth-token"],
   credentials: true,
 };
 app.use(cors());
@@ -78,15 +73,6 @@ const server = app
     console.error("Server error:", err);
     process.exit(1);
   });
-
-// Handle graceful shutdown
-process.on("SIGTERM", () => {
-  console.log("SIGTERM received, shutting down gracefully");
-  server.close(() => {
-    mongoose.connection.close();
-    process.exit(0);
-  });
-});
 
 module.exports = server;
 
