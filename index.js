@@ -28,7 +28,12 @@ if (!process.env.JWT_PRIVATE_KEY) {
 const corsOptions = {
   origin: process.env.ALLOWED_ORIGIN,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "x-auth-token"],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "x-auth-token",
+    "X-Auth-Token",
+  ],
   credentials: true,
 };
 app.use(cors(corsOptions));
