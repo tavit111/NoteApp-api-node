@@ -42,6 +42,15 @@ app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
 app.use(express.json());
 
+//testing
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "OK",
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+  });
+});
+
 //endpoints
 app.use("/api/notes", notes);
 app.use("/api/user", user);
@@ -61,9 +70,23 @@ mongoose.connection.on("error", (err) => {
 
 //server listener
 const port = process.env.PORT || 8080;
-const server = app.listen(port, "0.0.0.0", () =>
-  console.log(`listen on port ${port}...`),
-);
+const server = app
+  .listen(port, "0.0.0.0", () => {
+    console.log(`Server successfully listening on port ${port} at 0.0.0.0`);
+  })
+  .on("error", (err) => {
+    console.error("Server error:", err);
+    process.exit(1);
+  });
+
+// Handle graceful shutdown
+process.on("SIGTERM", () => {
+  console.log("SIGTERM received, shutting down gracefully");
+  server.close(() => {
+    mongoose.connection.close();
+    process.exit(0);
+  });
+});
 
 module.exports = server;
 
