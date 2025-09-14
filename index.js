@@ -26,6 +26,15 @@ if (!process.env.JWT_PRIVATE_KEY) {
   process.exit(1);
 }
 
+//testing
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "OK",
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+  });
+});
+
 //middleware
 const corsOptions = {
   origin: process.env.ALLOWED_ORIGIN,
@@ -41,15 +50,6 @@ const corsOptions = {
 app.use(cors());
 app.options("*", cors());
 app.use(express.json());
-
-//testing
-app.get("/health", (req, res) => {
-  res.status(200).json({
-    status: "OK",
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-  });
-});
 
 //endpoints
 app.use("/api/notes", notes);
