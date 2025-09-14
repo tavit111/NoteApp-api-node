@@ -60,7 +60,7 @@ mongoose.connection.on("error", (err) => {
 });
 
 //server listener
-const port = process.env.PORT;
+const port = process.env.PORT || 8080;
 const server = app.listen(port, "0.0.0.0", () =>
   console.log(`listen on port ${port}...`),
 );
