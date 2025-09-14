@@ -55,6 +55,10 @@ mongoose
   .then(() => console.log(`connected to db ${dbUrl}`))
   .catch((er) => console.log(er));
 
+mongoose.connection.on("error", (err) => {
+  console.error("MongoDB connection error:", err);
+});
+
 //server listener
 const port = process.env.PORT;
 const server = app.listen(port, "0.0.0.0", () =>
