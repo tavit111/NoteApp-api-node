@@ -38,8 +38,8 @@ const corsOptions = {
   ],
   credentials: true,
 };
-app.use(cors(corsOptions));
-app.options("*", cors(corsOptions));
+app.use(cors());
+app.options("*", cors());
 app.use(express.json());
 
 //testing
